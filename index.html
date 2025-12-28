@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>T.A.S.C Dashboard</title>
+<style>
+body { margin:0; background:#07162e; color:#e0f7ff; font-family:"Courier New", monospace; }
+
+/* ---------- LOGIN ---------- */
+#login { height:100vh; display:flex; justify-content:center; align-items:center; }
+.login-box { border:2px solid #00cfff; padding:30px; width:300px; text-align:center; box-shadow:0 0 20px #00cfff; }
+.login-box h1 { color:#00e5ff; }
+.login-box input { width:90%; padding:10px; margin:10px 0; background:#000; color:#00e5ff; border:1px solid #00cfff; }
+.login-box button { padding:10px 20px; background:#00cfff; border:none; cursor:pointer; }
+.error { color:red; font-size:12px; }
+
+/* ---------- DASHBOARD ---------- */
+#dashboard { display:none; }
+header { text-align:center; padding:15px; border-bottom:2px solid #00cfff; }
+header h1 { font-size:42px; margin:0; color:#00e5ff; }
+header h2 { font-size:16px; margin:5px 0; }
+.welcome { font-size:14px; margin-bottom:5px; color:#ff5252; }
+
+/* ---------- GRID CARDS ---------- */
+.grid { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; padding:20px; }
+.card { border:2px solid #00cfff; padding:20px; background:rgba(0,60,120,0.3); box-shadow:0 0 12px #00cfff; cursor:pointer; }
+.card.red { border-color:red; color:red; box-shadow:0 0 15px red; }
+
+/* ---------- WORLD MAP ---------- */
+.map { position:relative; height:250px; background:url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') no-repeat center; background-size:contain; border:2px solid #00cfff; }
+.dot { position:absolute; width:12px; height:12px; background:red; border-radius:50%; animation: blink 1.2s infinite; border:1px solid #fff; box-shadow:0 0 5px red; cursor:pointer; }
+@keyframes blink { 0%{opacity:1}50%{opacity:0.1}100%{opacity:1} }
+
+/* ---------- MOST WANTED ---------- */
+.wanted { display:flex; justify-content:space-between; margin-top:10px; border-top:1px solid #00cfff; padding-top:10px; flex-wrap:wrap; }
+.wanted div { width:32%; border:1px solid red; padding:10px; text-align:center; box-shadow:0 0 10px red; margin-bottom:10px; }
+
+/* ---------- LIVE TRACKING ---------- */
+.tracking { grid-column:span 4; }
+.bar { width:100%; height:18px; background:#000; border:1px solid #00cfff; margin-top:10px; }
+.fill { height:100%; width:0%; background:lime; animation: move 4s infinite; }
+@keyframes move { 0%{width:5%;}50%{width:90%;}100%{width:5%;} }
+
+/* ---------- SECURITY INFO ---------- */
+.security { grid-column:span 4; border:2px solid #00cfff; padding:15px; box-shadow:0 0 12px #00cfff; background:rgba(0,0,50,0.5); }
+
+/* ---------- MODAL ---------- */
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; z-index:999; }
+.modal-content { background:#07162e; border:2px solid #00cfff; padding:20px; width:400px; box-shadow:0 0 20px #00cfff; }
+.modal-content h2 { color:#00e5ff; }
+.modal-content ul { list-style:none; padding-left:0; }
+.modal-content li { padding:6px 0; border-bottom:1px solid #00cfff; }
+.close { float:right; cursor:pointer; color:red; font-size:18px; }
+
+footer { text-align:center; font-size:11px; opacity:0.6; padding:10px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-box">
+    <h1>T.A.S.C</h1>
+    <p>Secure Access</p>
+    <input id="user" placeholder="Agent ID" />
+    <input id="pass" type="password" placeholder="Password" />
+    <button onclick="login()">ACCESS</button>
+    <p id="error" class="error"></p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+<header>
+  <div class="welcome" id="welcome-msg"></div>
+  <h1>T.A.S.C</h1>
+  <h2>Threat Analysis and Surveillance Cell</h2>
+</header>
+
+<section class="grid">
+
+  <!-- RED ALERT -->
+  <div class="card red" onclick="alert('RED ALERT!')">🔴 RED ALERT</div>
+
+  <!-- TOP SECRET -->
+  <div class="card" onclick="openModal('topsecret')">🔐 TOP SECRET</div>
+
+  <!-- CLASSIFIED DOCUMENTS -->
+  <div class="card" onclick="openModal('classified')">📁 CLASSIFIED DOCUMENTS</div>
+
+  <!-- MOST WANTED -->
+  <div class="card">
+    🚨 MOST WANTED
+    <div class="wanted">
+      <div>Basharat Ali<br>Status: ACTIVE<br>Threat: HIGH</div>
+      <div>Faizan Ali<br>Status: TRACKED<br>Threat: MED</div>
+      <div>Al Qatil<br>Status: UNKNOWN<br>Threat: HIGH</div>
+      <div>Major Iqbal<br>Status: ACTIVE<br>Threat: HIGH</div>
+      <div>Rehman Khan<br>Status: TRACKED<br>Threat: MED</div>
+    </div>
+  </div>
+
+  <!-- WORLD MAP -->
+  <div class="card">
+    🌍 GLOBAL SURVEILLANCE MAP
+    <div class="map">
+      <div class="dot" style="top:40%; left:48%;" title="Location 1"></div>
+      <div class="dot" style="top:60%; left:35%;" title="Location 2"></div>
+      <div class="dot" style="top:50%; left:70%;" title="Location 3"></div>
+      <div class="dot" style="top:30%; left:30%;" title="Location 4"></div>
+      <div class="dot" style="top:65%; left:80%;" title="Location 5"></div>
+    </div>
+  </div>
+
+  <!-- LIVE TRACKING -->
+  <div class="card tracking">
+    📡 LIVE TRACKING DATA
+    <div class="bar"><div class="fill"></div></div>
+  </div>
+
+  <!-- SECURITY INFO -->
+  <div class="card security">
+    🛡 SECURITY STATUS
+    <ul>
+      <li>Server Uptime: 99.9%</li>
+      <li>Firewall Status: ACTIVE</li>
+      <li>Network Traffic: NORMAL</li>
+      <li>Intrusion Attempts: 0</li>
+      <li>Encryption Level: AES-256</li>
+    </ul>
+  </div>
+
+</section>
+
+<footer>⚠️ Fictional Interface | Educational / Portfolio Use Only</footer>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">✖</span>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ---------- MULTIPLE AGENTS ----------
+const agents = [
+  { id: "TASC.01", password: "RED" },
+  { id: "TASC.02", password: "RED" },
+  { id: "TASC.03", password: "RED" },
+  { id: "TASC.04", password: "RED" }
+];
+
+function login() {
+  const userInput = document.getElementById("user").value;
+  const passInput = document.getElementById("pass").value;
+  const error = document.getElementById("error");
+
+  const valid = agents.find(a => a.id===userInput && a.password===passInput);
+  if(valid){
+    document.getElementById("login").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("welcome-msg").innerText = `Welcome ${valid.id}`;
+  } else {
+    error.innerText = "ACCESS DENIED";
+  }
+}
+
+// ---------- MODAL FUNCTION ----------
+function openModal(type){
+  const body = document.getElementById("modal-body");
+  if(type==="classified"){
+    body.innerHTML = `<h2>📁 CLASSIFIED DOCUMENTS</h2>
+      <ul>
+        <li>Operation Nightfall.pdf</li>
+        <li>Agent Network Report.docx</li>
+        <li>Surveillance Logs_2025.zip</li>
+        <li>Threat Assessment Alpha.txt</li>
+      </ul>`;
+  }
+  if(type==="topsecret"){
+    body.innerHTML = `<h2>🔐 TOP SECRET FILES</h2>
+      <p>⚠ Clearance Level: OMEGA</p>
+      <ul>
+        <li>Operation Black Hawk – ACTIVE</li>
+        <li>Deep Cover Assets – CLASSIFIED</li>
+        <li>Foreign Intel Exchange – RESTRICTED</li>
+      </ul>`;
+  }
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(){ document.getElementById("modal").style.display="none"; }
+</script>
+</body>
+</html>
